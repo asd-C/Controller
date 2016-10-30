@@ -108,8 +108,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // textview which shows the received SMSs
         sms_main = (TextView) findViewById(R.id.sms_main);
-
-        requestSMSAndAdminPermission();
     }
 
     private void requestSMSAndAdminPermission() {
@@ -130,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         doBindService();
+        requestSMSAndAdminPermission();
     }
 
     @Override
