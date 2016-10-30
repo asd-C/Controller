@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Controller</string>
+
+    <string name="default_sms_main">No sms to show</string>
+</resources>
