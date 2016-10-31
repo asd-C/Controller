@@ -27,12 +27,13 @@ import com.example.cc.controller.service.tools.PlaySound;
 /*
 * Feature available:
 *       read new incoming sms,
-*       play sound,
+*       #(SMSCommand)play sound,
 *       app with admin permission,
-*       lock screen
+*       #(SMSCommand)lock screen,
+*       #(SMSCommand)retrieve geolocation,
+*       notification when is active
 *
 * Features to implement:
-*       retrieve geolocation,
 *       finish command class,
 *       finish SMSParser
 *
@@ -55,6 +56,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (what) {
                 case ServiceCommands.MSG_NEW_SMS:
                     sms_main.setText(((Bundle)msg.obj).getString("sms"));
+                    break;
+                case ServiceCommands.MSG_START_RECEIVING_SMS:
+                    enable_btn.setText(BTN_DISABLE);
+                    break;
+                case ServiceCommands.MSG_STOP_RECEIVING_SMS:
+                    enable_btn.setText(BTN_ENABLE);
                     break;
             }
             super.handleMessage(msg);
@@ -92,8 +99,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private Button button;
+    private Button enable_btn;
     private TextView textView;
     private TextView sms_main;
+
+    private static final String BTN_ENABLE = "ENABLE";
+    private static final String BTN_DISABLE = "DISABLE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,20 +119,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // textview which shows the received SMSs
         sms_main = (TextView) findViewById(R.id.sms_main);
+
+        enable_btn = (Button) findViewById(R.id.enable_btn_main);
+        enable_btn.setOnClickListener(this);
+        enable_btn.setText(BTN_ENABLE);
     }
 
     private void requestSMSAndAdminPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (this.checkSelfPermission(Manifest.permission.RECEIVE_SMS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                this.requestPermissions(
-                        new String[]{Manifest.permission.RECEIVE_SMS}, 0);
-            }
-        }
 
         if (!DeviceAdminTools.getInstance(this).isDeviceAdminActive(this)) {
             DeviceAdminTools.getInstance(this).requestAdminPermission(this,this);
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (this.checkSelfPermission(Manifest.permission.RECEIVE_SMS)
+                    != PackageManager.PERMISSION_GRANTED ||
+                    this.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                this.requestPermissions(
+                        new String[]{Manifest.permission.RECEIVE_SMS,
+                                Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            }
+        }
+
     }
 
     @Override
@@ -169,6 +189,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     p.play();
                 }
                 break;
+
+            case R.id.enable_btn_main:
+                Button btn = (Button) v;
+                if (btn.getText().equals(BTN_ENABLE)) {
+                    if (serviceMessenger != null) {
+                        Message msg = Message.obtain();
+                        msg.what = ServiceCommands.MSG_START_RECEIVING_SMS;
+                        try {
+                            serviceMessenger.send(msg);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        btn.setText(BTN_DISABLE);
+                    }
+                } else {
+                    if (serviceMessenger != null) {
+                        Message msg = Message.obtain();
+                        msg.what = ServiceCommands.MSG_STOP_RECEIVING_SMS;
+                        try {
+                            serviceMessenger.send(msg);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    btn.setText(BTN_ENABLE);
+                }
+
             default:
                 break;
         }

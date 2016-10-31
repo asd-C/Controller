@@ -34,4 +34,12 @@
         android:layout_above="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp" />
+
+    <Button
+        android:text="@string/enable_btn_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/enable_btn_main" />
 </RelativeLayout>
