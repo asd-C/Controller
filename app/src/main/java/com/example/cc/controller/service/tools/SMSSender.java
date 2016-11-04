@@ -28,11 +28,11 @@ public class SMSSender {
         return instance;
     }
 
-    public String getLastPhoneNumber() {
+    public synchronized String getLastPhoneNumber() {
         return lastPhoneNumber;
     }
 
-    public void setLastPhoneNumber(String lastPhoneNumber) {
+    public synchronized void setLastPhoneNumber(String lastPhoneNumber) {
         this.lastPhoneNumber = lastPhoneNumber;
     }
 
@@ -106,11 +106,11 @@ public class SMSSender {
 
     private Handler handler = new Handler();
 
-    public void sendLocationBack() {
+    public synchronized void sendLocationBack() {
         handler.post(smsSender);
     }
 
-    public void sendOption() {
+    public synchronized void sendOption() {
         String ops = "You have options: ";
                   //  + "##LOCATION, ";
                    // + "##PLAYSOUND, "
@@ -120,12 +120,12 @@ public class SMSSender {
         sendSMS(lastPhoneNumber, ops);
     }
 
-    public void sendHi() {
+    public synchronized void sendHi() {
         sendSMS(lastPhoneNumber, "Hi, you just opened the session.");
         sendOption();
     }
 
-    public void sendBye() {
+    public synchronized void sendBye() {
         sendSMS(lastPhoneNumber, "The session is closed now.");
     }
 }

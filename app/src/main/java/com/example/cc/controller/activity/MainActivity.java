@@ -39,12 +39,12 @@ import com.example.cc.controller.service.tools.PlaySound;
 *       #(SMSCommand)retrieve geolocation,
 *       notification when is active,
 *       open/close session to send commands
+*       auto start,
 *       check if gps is on
 *
 * Features to implement:
 *       finish command class,
 *       finish SMSParser
-*       auto start
 *       save/recover last state
 *       presentation
 *

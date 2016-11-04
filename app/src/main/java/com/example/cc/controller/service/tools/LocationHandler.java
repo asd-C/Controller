@@ -54,35 +54,28 @@ public class LocationHandler implements LocationListener {
         return instance;
     }
 
-    public boolean isGPSOn() {
+    public synchronized boolean isGPSOn() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    public boolean isListenerRegistered() {
+    public synchronized boolean isListenerRegistered() {
         return isListenerRegistered;
     }
 
-    public void setListenerRegistered(boolean listenerRegistered) {
+    public synchronized void setListenerRegistered(boolean listenerRegistered) {
         isListenerRegistered = listenerRegistered;
     }
 
-    public Location getLocation() {
+    public synchronized Location getLocation() {
         return location;
     }
 
-    public void registerLocationListener() {
+    public synchronized void registerLocationListener() {
         if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         // if it is already registered
@@ -96,19 +89,12 @@ public class LocationHandler implements LocationListener {
                 this);
     }
 
-    public void unregisterLocationListener() {
+    public synchronized void unregisterLocationListener() {
         if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         // if it is not registered
