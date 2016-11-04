@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -15,7 +14,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.provider.Telephony;
-import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -25,6 +23,7 @@ import com.example.cc.controller.service.admin.DeviceAdminTools;
 import com.example.cc.controller.service.command.ServiceCommands;
 import com.example.cc.controller.service.tools.LocationHandler;
 import com.example.cc.controller.service.tools.PlaySound;
+import com.example.cc.controller.service.tools.SMSSender;
 
 public class MainService extends Service {
 
@@ -97,8 +96,8 @@ public class MainService extends Service {
                     new Intent(this, MainActivity.class),
                     0);
             notification = new Notification.Builder(this)
-                    .setContentTitle("hi")
-                    .setContentText("hello")
+                    .setContentTitle("Controller")
+                    .setContentText("Hey mortal! Feed me!")
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(contentIntent)
                     .build();
@@ -135,6 +134,8 @@ public class MainService extends Service {
         if (isRegisteredReceiver == true) {
             this.unregisterReceiver(messageReceiver);
             isRegisteredReceiver = false;
+            stopSession(null);
+            Log.i("MessageReceiver", "unregistering messageReceiver.");
         }
     }
 
@@ -146,9 +147,15 @@ public class MainService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
-            lastPhoneNumber = messages[0].getOriginatingAddress();
             String sms = messages[0].getMessageBody();
-            handleSMS(sms);
+            if (startSession(messages[0])) {
+                if (messages[0].getOriginatingAddress()
+                        .equalsIgnoreCase(SMSSender.getInstance(context)
+                                .getLastPhoneNumber())) {
+                    handleSMS(sms);
+                    stopSession(messages[0]);
+                }
+            }
             Log.i("MessageReceiver,SMS", sms);
         }
     }
@@ -168,21 +175,15 @@ public class MainService extends Service {
             PlaySound.getInstance(getApplicationContext()).stop();
         } else if (sms.contains("##LOCATION")) {
             LocationHandler lh = LocationHandler.getInstance(this);
-            // avoid register location listener many times
-            if (lh.isListenerRegistered() == false) {
-                lh.registerLocationListener();
-            }
+            lh.registerLocationListener();
+
             // checking again, because it is possible
             // that fails to register Location listener
             if (lh.isListenerRegistered()) {
-                sendSMSBack();
+                SMSSender.getInstance(this).sendLocationBack();
             }
         }
-//        } else if (sms.contains("##STOPLOCATION")) {
-//            LocationHandler lh = LocationHandler.getInstance(this);
-//            if (lh.isListenerRegistered() == true) {
-//                LocationHandler.getInstance(this).unregisterLocationListener();
-//            }
+
         notifyClientNewIncomingSMS(sms);
     }
 
@@ -205,44 +206,41 @@ public class MainService extends Service {
         }
     }
 
-    private boolean tryToSendLocationBack() {
-        LocationHandler locationHandler = LocationHandler.getInstance(this);
-        Location location = locationHandler.getLocation();
-        if (location != null && lastPhoneNumber != null) {
-            String latlon = "http://maps.google.com/maps?q=loc:"
-                    + String.valueOf(location.getLatitude()) + ","
-                    + String.valueOf(location.getLongitude());
+    private boolean isSessionStarted;
 
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(
-                    lastPhoneNumber,
-                    null,
-                    latlon,
-                    null,
-                    null);
-            Log.i("To " + lastPhoneNumber, latlon);
+    /**
+     * Start session to receive commands from requester
+     * */
+    private boolean startSession(SmsMessage sms) {
+        if (isSessionStarted) return true;
+
+        if (sms.getMessageBody().contains("#HI")) {
+            Log.i("Session", "Session opened.");
+            SMSSender smsSender = SMSSender.getInstance(this);
+            smsSender.setLastPhoneNumber(sms.getOriginatingAddress());
+            smsSender.sendHi();
+            isSessionStarted = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Called when requester send "#BYE" or when unregister the receiver.
+     * Close session.
+     * */
+    private boolean stopSession(SmsMessage sms) {
+        if (!isSessionStarted) return true;
+
+        // sms = null, when unregister the receiver
+        if (sms == null || sms.getMessageBody().contains("#BYE")) {
+            Log.i("Session", "Session closed.");
+            isSessionStarted = false;
+            SMSSender.getInstance(this).sendBye();
+            SMSSender.getInstance(this).setLastPhoneNumber(null);
             return true;
         }
         return false;
     }
-
-    private String lastPhoneNumber;
-
-    private Runnable smsSender = new Runnable() {
-        @Override
-        public void run() {
-            if (!tryToSendLocationBack()) {
-                handler.postDelayed(smsSender, 5000);
-            } else {
-                LocationHandler.getInstance(MainService.this).unregisterLocationListener();
-            }
-        }
-    };
-
-    private Handler handler = new Handler();
-
-    private void sendSMSBack() {
-        handler.post(smsSender);
-    }
-
 }

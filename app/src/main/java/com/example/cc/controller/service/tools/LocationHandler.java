@@ -20,6 +20,7 @@ public class LocationHandler implements LocationListener {
     private Context context;
     private Location location;
     private boolean isListenerRegistered;
+    private static final String LOG = "LocationHandler";
 
     // update in 2 minutes
     private static final int LOCATION_REFRESH_TIME = 2 * 60 * 1000;
@@ -53,6 +54,10 @@ public class LocationHandler implements LocationListener {
         return instance;
     }
 
+    public boolean isGPSOn() {
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
     public boolean isListenerRegistered() {
         return isListenerRegistered;
     }
@@ -80,6 +85,9 @@ public class LocationHandler implements LocationListener {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        // if it is already registered
+        if (isListenerRegistered) return;
+
         isListenerRegistered = true;
         locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
@@ -103,6 +111,9 @@ public class LocationHandler implements LocationListener {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        // if it is not registered
+        if (!isListenerRegistered) return;
+
         isListenerRegistered = false;
         locationManager.removeUpdates(this);
     }

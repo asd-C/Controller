@@ -1,17 +1,22 @@
 package com.example.cc.controller.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +27,7 @@ import com.example.cc.controller.R;
 import com.example.cc.controller.service.MainService;
 import com.example.cc.controller.service.admin.DeviceAdminTools;
 import com.example.cc.controller.service.command.ServiceCommands;
+import com.example.cc.controller.service.tools.LocationHandler;
 import com.example.cc.controller.service.tools.PlaySound;
 
 /*
@@ -31,11 +37,16 @@ import com.example.cc.controller.service.tools.PlaySound;
 *       app with admin permission,
 *       #(SMSCommand)lock screen,
 *       #(SMSCommand)retrieve geolocation,
-*       notification when is active
+*       notification when is active,
+*       open/close session to send commands
+*       check if gps is on
 *
 * Features to implement:
 *       finish command class,
 *       finish SMSParser
+*       auto start
+*       save/recover last state
+*       presentation
 *
 * Warning:
 *       resetPassword is not in use
@@ -100,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button button;
     private Button enable_btn;
-    private TextView textView;
     private TextView sms_main;
 
     private static final String BTN_ENABLE = "ENABLE";
@@ -112,10 +122,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         startService(new Intent(this, MainService.class));
+        requestSMSAndAdminPermission();
 
         button = (Button) findViewById(R.id.button);
         button.setOnClickListener(this);
-        textView = (TextView) findViewById(R.id.textView);
 
         // textview which shows the received SMSs
         sms_main = (TextView) findViewById(R.id.sms_main);
@@ -125,11 +135,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         enable_btn.setText(BTN_ENABLE);
     }
 
+    /**
+     * Called in onCreated()
+     * Check admin, sms and location permission,
+     * request if app does not have yet
+     * */
     private void requestSMSAndAdminPermission() {
-
-        if (!DeviceAdminTools.getInstance(this).isDeviceAdminActive(this)) {
-            DeviceAdminTools.getInstance(this).requestAdminPermission(this,this);
-        }
+        requestAdminPermission();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (this.checkSelfPermission(Manifest.permission.RECEIVE_SMS)
@@ -141,14 +153,72 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             }
         }
+    }
 
+    /**
+     * Request admin permission if app does not have yet
+     * */
+    private void requestAdminPermission() {
+        if (!haveAdminPermission()) {
+            DeviceAdminTools.getInstance(this).requestAdminPermission(this,this);
+        }
+    }
+
+    /**
+     * Check if app has admin permissions.
+     * */
+    private boolean haveAdminPermission() {
+        return DeviceAdminTools.getInstance(this).isDeviceAdminActive(this);
+    }
+
+    /**
+     * Check if app has all permissions, SMS and location.
+     * */
+    private boolean haveAllPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (this.checkSelfPermission(Manifest.permission.RECEIVE_SMS)
+                    != PackageManager.PERMISSION_GRANTED ||
+                    this.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private void showInfoAboutPermissions() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Permissions not granted.")
+                .setCancelable(false)
+                .setMessage("We need all these permissions to provide services to you." +
+                        " Please, grant them!")
+                .setNegativeButton("NO!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Setting", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", MainActivity.this.getPackageName(), null);
+                        intent.setData(uri);
+                        MainActivity.this.startActivity(intent);
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         doBindService();
-        requestSMSAndAdminPermission();
+//        requestSMSAndAdminPermission();
     }
 
     @Override
@@ -178,7 +248,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.button:
                 PlaySound p = PlaySound.getInstance(getApplicationContext());
@@ -192,32 +261,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.enable_btn_main:
                 Button btn = (Button) v;
-                if (btn.getText().equals(BTN_ENABLE)) {
-                    if (serviceMessenger != null) {
-                        Message msg = Message.obtain();
-                        msg.what = ServiceCommands.MSG_START_RECEIVING_SMS;
-                        try {
-                            serviceMessenger.send(msg);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                        btn.setText(BTN_DISABLE);
-                    }
-                } else {
-                    if (serviceMessenger != null) {
-                        Message msg = Message.obtain();
-                        msg.what = ServiceCommands.MSG_STOP_RECEIVING_SMS;
-                        try {
-                            serviceMessenger.send(msg);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    btn.setText(BTN_ENABLE);
-                }
+                enableBtnClicked(btn);
+                break;
 
             default:
                 break;
         }
+    }
+
+    /**
+     * Check if it is ready to start, if not request permissions.
+     * Change the button's text, ENABLE/DISABLE.
+     * Notify the MainService to start monitoring incoming sms.
+     * */
+    private void enableBtnClicked(Button btn) {
+        if (btn.getText().equals(BTN_ENABLE)) {
+            // if do not have admin permission,
+            // can not start the service.
+            if (!haveAdminPermission()) {
+                requestAdminPermission();
+                return;
+            }
+            // if do not have all permission,
+            // can not start the service.
+            if (!haveAllPermissions()) {
+                showInfoAboutPermissions();
+                return;
+            }
+            // if GPS if off, request to turn on and return
+            if (!LocationHandler.getInstance(this).isGPSOn()) {
+                showDialogRequestingGPS();
+                return;
+            }
+            if (serviceMessenger != null) {
+                Message msg = Message.obtain();
+                msg.what = ServiceCommands.MSG_START_RECEIVING_SMS;
+                try {
+                    serviceMessenger.send(msg);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                btn.setText(BTN_DISABLE);
+            } else {
+                startService(new Intent(this, MainService.class));
+                doBindService();
+            }
+        } else {
+            if (serviceMessenger != null) {
+                Message msg = Message.obtain();
+                msg.what = ServiceCommands.MSG_STOP_RECEIVING_SMS;
+                try {
+                    serviceMessenger.send(msg);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                startService(new Intent(this, MainService.class));
+                doBindService();
+            }
+            btn.setText(BTN_ENABLE);
+        }
+    }
+
+    /**
+     * When GPS is off, show the dialog explaining why GPS is needed
+     * */
+    private void showDialogRequestingGPS() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("GPS is off!")
+                .setMessage("Please, turn on GPS! \nWe need GPS to locate your phone if you lost it.")
+                .create();
+        dialog.show();
     }
 }
