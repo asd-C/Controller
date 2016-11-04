@@ -16,6 +16,7 @@ import android.os.RemoteException;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.cc.controller.R;
 import com.example.cc.controller.activity.MainActivity;
@@ -24,6 +25,7 @@ import com.example.cc.controller.service.command.ServiceCommands;
 import com.example.cc.controller.service.tools.LocationHandler;
 import com.example.cc.controller.service.tools.PlaySound;
 import com.example.cc.controller.service.tools.SMSSender;
+import com.example.cc.controller.service.tools.StateManager;
 
 public class MainService extends Service {
 
@@ -60,14 +62,12 @@ public class MainService extends Service {
                 // Request the server turn message receiver on
                 // the server starts monitoring incoming sms
                 case ServiceCommands.MSG_START_RECEIVING_SMS:
-                    showNotification();
                     registerMessageReceiver();
                     break;
 
                 // Request the server turn message receiver ff
                 // the server stops monitoring incoming sms
                 case ServiceCommands.MSG_STOP_RECEIVING_SMS:
-                    cancelNotification();
                     unregisterMessageReceiver();
                     break;
 
@@ -75,6 +75,26 @@ public class MainService extends Service {
                     super.handleMessage(msg);
                     break;
             }
+        }
+    }
+
+    private boolean saveState(int state) {
+        return StateManager.getInstance(this).setLastState(state);
+    }
+
+    private int getState() {
+        return StateManager.getInstance(this).getLastState();
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        int state = getState();
+        if (state == StateManager.STATE_ENABLED) {
+            registerMessageReceiver();
+            Toast.makeText(this, "State is enabled.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "State is disabled.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -119,10 +139,12 @@ public class MainService extends Service {
      * Register a message receiver to the service
      * */
     private void registerMessageReceiver() {
-        if (isRegisteredReceiver == false) {
+        if (!isRegisteredReceiver) {
             this.registerReceiver(messageReceiver,
                     new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION));
             isRegisteredReceiver = true;
+            showNotification();
+            saveState(StateManager.STATE_ENABLED);
             Log.i("MessageReceiver", "registering messageReceiver.");
         }
     }
@@ -131,9 +153,11 @@ public class MainService extends Service {
      * Unregister a message receiver to the service
      * */
     private void unregisterMessageReceiver() {
-        if (isRegisteredReceiver == true) {
+        if (isRegisteredReceiver) {
             this.unregisterReceiver(messageReceiver);
             isRegisteredReceiver = false;
+            saveState(StateManager.STATE_DISABLED);
+            cancelNotification();
             stopSession(null);
             Log.i("MessageReceiver", "unregistering messageReceiver.");
         }

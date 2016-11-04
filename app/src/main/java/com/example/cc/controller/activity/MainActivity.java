@@ -40,12 +40,13 @@ import com.example.cc.controller.service.tools.PlaySound;
 *       notification when is active,
 *       open/close session to send commands
 *       auto start,
+*       save/recover last state,
 *       check if gps is on
 *
 * Features to implement:
 *       finish command class,
 *       finish SMSParser
-*       save/recover last state
+*       layout
 *       presentation
 *
 * Warning:
