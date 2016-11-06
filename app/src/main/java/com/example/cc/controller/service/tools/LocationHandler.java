@@ -22,10 +22,10 @@ public class LocationHandler implements LocationListener {
     private boolean isListenerRegistered;
     private static final String LOG = "LocationHandler";
 
-    // update in 2 minutes
-    private static final int LOCATION_REFRESH_TIME = 2 * 60 * 1000;
-    // update in 50 meters
-    private static final int LOCATION_REFRESH_DISTANCE = 50;
+    // update in 5 seconds
+    private static final int LOCATION_REFRESH_TIME = 5000;
+    // update in 0 meters
+    private static final int LOCATION_REFRESH_DISTANCE = 0;
 
     private LocationHandler(Context context) {
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);

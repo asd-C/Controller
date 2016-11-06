@@ -18,6 +18,7 @@ public class SMSSender {
         this.context = context;
     }
 
+    // TODO avoid use context in static instante
     private Context context;
     private String lastPhoneNumber;
 
@@ -65,27 +66,49 @@ public class SMSSender {
         return false;
     }
 
+    // TODO Create a instance to handle sms sending, which contains a constant phone number(immutable)
     private Runnable smsSender = new Runnable() {
         @Override
         public void run() {
-            // When timer is greater than MAX_ATTEMPT,
+            // When there is not timeout,
             // then try to send sms
-            if (timer > 0) {
+            if (!timeout()) {
                 if (!tryToSendLocationBack()) {
                     // When it failed to send sms, try it later and decrease the timer
-                    handler.postDelayed(smsSender, WAIT_TIME);
-                    timer--;
+                    tryAgain();
                 } else {
-                    // When it succeed, recover the timer, and unregister location listener
-                    timer = MAX_ATTEMPT;
-                    LocationHandler.getInstance(context).unregisterLocationListener();
+                    // When it succeed, reset the timer, and unregister location listener
+                    finishAndReset();
                 }
             } else {
-                // Timeout, stop trying to send, and recover the timer
-                timer = MAX_ATTEMPT;
+                // Timeout, stop trying to send, reset the timer and unregister location listener
+                finishAndReset();
             }
         }
     };
+
+    /**
+     * Check if it timeouts.
+     * */
+    private boolean timeout() {
+        return !(timer > 0);
+    }
+
+    /**
+     * Try to send again and decrease the timer.
+     * */
+    private void tryAgain() {
+        handler.postDelayed(smsSender, WAIT_TIME);
+        timer--;
+    }
+
+    /**
+     * Unregister location listener and reset timer.
+     * */
+    private void finishAndReset() {
+        timer = MAX_ATTEMPT;
+        LocationHandler.getInstance(context).unregisterLocationListener();
+    }
 
     private void sendSMS(String desaddr,String sms) {
         SmsManager smsManager = SmsManager.getDefault();

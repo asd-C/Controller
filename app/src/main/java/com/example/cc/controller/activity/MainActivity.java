@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.cc.controller.R;
+import com.example.cc.controller.activity.intro.IntroActivity;
 import com.example.cc.controller.service.MainService;
 import com.example.cc.controller.service.admin.DeviceAdminTools;
 import com.example.cc.controller.service.command.ServiceCommands;
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startActivity(new Intent(this, IntroActivity.class));
 
         startService(new Intent(this, MainService.class));
         requestSMSAndAdminPermission();
@@ -177,14 +179,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * */
     private boolean haveAllPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (this.checkSelfPermission(Manifest.permission.RECEIVE_SMS)
+            return !(this.checkSelfPermission(Manifest.permission.RECEIVE_SMS)
                     != PackageManager.PERMISSION_GRANTED ||
                     this.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                            != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            } else {
-                return true;
-            }
+                            != PackageManager.PERMISSION_GRANTED);
         } else {
             return true;
         }
