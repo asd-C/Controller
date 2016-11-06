@@ -9,18 +9,29 @@
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
 
-    <string name="slide_1_title">Hello Food!</string>
-    <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
+    <string name="slide_1_title">Lost your phone?</string>
+    <string name="slide_1_desc">Do not remember where is your cell phone? \nOr it has been stolen?</string>
 
-    <string name="slide_2_title">Movie Tickets</string>
-    <string name="slide_2_desc">Book movie tickets for your family and friends!</string>
+    <string name="slide_2_title">Track your phone!</string>
+    <string name="slide_2_desc">You can track your cell phone via SMS! \nWe just need some permissions!</string>
 
-    <string name="slide_3_title">Great Discounts</string>
-    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
+    <string name="slide_3_title">We can do more!</string>
+    <string name="slide_3_desc">We can lock cell phone screen and change the password! \nWe just need admin permission!</string>
 
-    <string name="slide_4_title">World Travel</string>
-    <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
+    <string name="slide_4_title">Let us start?!</string>
+    <string name="slide_4_desc">Let us start?!</string>
 
-    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
-    <string name="play_again">Play Again</string>
+    <!-- SMS commands-->
+    <string name="LOCK_SCREEN">##lockscreen</string>
+    <string name="PLAY_SOUND">##playsound</string>
+    <string name="STOP_SOUND">##stopsound</string>
+    <string name="LOCATION">##location</string>
+
+    <string-array name="Commands">
+        <item>@string/PLAY_SOUND</item>
+        <item>@string/STOP_SOUND</item>
+        <item>@string/LOCATION</item>
+        <item>@string/LOCK_SCREEN</item>
+    </string-array>
+
 </resources>

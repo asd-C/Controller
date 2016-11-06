@@ -16,7 +16,6 @@ import android.os.RemoteException;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.cc.controller.R;
 import com.example.cc.controller.activity.MainActivity;
@@ -92,9 +91,6 @@ public class MainService extends Service {
         int state = getState();
         if (state == StateManager.STATE_ENABLED) {
             registerMessageReceiver();
-            Toast.makeText(this, "State is enabled.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "State is disabled.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -117,7 +113,7 @@ public class MainService extends Service {
                     0);
             notification = new Notification.Builder(this)
                     .setContentTitle("Controller")
-                    .setContentText("Hey mortal! Feed me!")
+                    .setContentText("Hey human! Feed me a delicious sms!")
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(contentIntent)
                     .build();
@@ -191,13 +187,13 @@ public class MainService extends Service {
      * when it contains '##STOPSOUND', the server stop playing sound
      * */
     private void handleSMS(String sms) {
-        if (sms.contains("##LOCKSCREEN")) {
+        if (sms.contains(getString(R.string.LOCK_SCREEN))) {
             DeviceAdminTools.getInstance(this).lockScreen(this);
-        } else if (sms.contains("##PLAYSOUND")) {
+        } else if (sms.contains(getString(R.string.PLAY_SOUND))) {
             PlaySound.getInstance(getApplicationContext()).play();
-        } else if (sms.contains("##STOPSOUND")) {
+        } else if (sms.contains(getString(R.string.STOP_SOUND))) {
             PlaySound.getInstance(getApplicationContext()).stop();
-        } else if (sms.contains("##LOCATION")) {
+        } else if (sms.contains(getString(R.string.LOCATION))) {
             LocationHandler lh = LocationHandler.getInstance(this);
             lh.registerLocationListener();
 
@@ -238,7 +234,7 @@ public class MainService extends Service {
     private boolean startSession(SmsMessage sms) {
         if (isSessionStarted) return true;
 
-        if (sms.getMessageBody().contains("#HI")) {
+        if (sms.getMessageBody().toLowerCase().contains("#controller")) {
             Log.i("Session", "Session opened.");
             SMSSender smsSender = SMSSender.getInstance(this);
             smsSender.setLastPhoneNumber(sms.getOriginatingAddress());

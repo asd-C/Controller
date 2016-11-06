@@ -1,6 +1,8 @@
 package com.example.cc.controller.activity.intro;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.view.ViewPager;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.cc.controller.R;
 import com.example.cc.controller.activity.MainActivity;
+import com.example.cc.controller.service.admin.DeviceAdminTools;
 
 public class IntroActivity extends AppCompatActivity {
 
@@ -77,6 +80,42 @@ public class IntroActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * Check sms and location permission,
+     * request if app does not have yet
+     * */
+    private void requestSMSAndLocationPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (this.checkSelfPermission(Manifest.permission.RECEIVE_SMS)
+                    != PackageManager.PERMISSION_GRANTED ||
+                    this.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                this.requestPermissions(
+                        new String[]{Manifest.permission.RECEIVE_SMS,
+                                Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            }
+        }
+    }
+
+
+    /**
+     * Request admin permission if app does not have yet
+     * */
+    private void requestAdminPermission() {
+        if (!haveAdminPermission()) {
+            DeviceAdminTools.getInstance(this).requestAdminPermission(this,this);
+        }
+    }
+
+    /**
+     * Check if app has admin permissions.
+     * */
+    private boolean haveAdminPermission() {
+        return DeviceAdminTools.getInstance(this).isDeviceAdminActive(this);
+    }
+
     private void addBottomDots(int currentPage) {
         dots = new TextView[layouts.length];
 
@@ -101,7 +140,8 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     private void launchHomeScreen() {
-        startActivity(new Intent(this, MainActivity.class));
+//        startActivity(new Intent(this, MainActivity.class));
+        (new IntroHelper(this)).set(false);
         finish();
     }
 
@@ -118,6 +158,12 @@ public class IntroActivity extends AppCompatActivity {
             } else {
                 btnNext.setText(getString(R.string.next));
                 btnSkip.setVisibility(View.VISIBLE);
+            }
+
+            if (position == 2) {
+                requestSMSAndLocationPermission();
+            } else if (position == 3) {
+                requestAdminPermission();
             }
         }
 

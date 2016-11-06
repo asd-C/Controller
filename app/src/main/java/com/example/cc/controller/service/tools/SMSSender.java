@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.telephony.SmsManager;
 import android.util.Log;
 
+import com.example.cc.controller.R;
+
 /**
  * Created by chendehua on 16/11/3.
  */
@@ -16,11 +18,13 @@ public class SMSSender {
 
     private SMSSender(Context context) {
         this.context = context;
+        this.commands = context.getResources().getStringArray(R.array.Commands);
     }
 
     // TODO avoid use context in static instante
     private Context context;
     private String lastPhoneNumber;
+    private String[] commands;
 
     public synchronized static SMSSender getInstance(Context context) {
         if (instance == null) {
@@ -135,11 +139,10 @@ public class SMSSender {
 
     public synchronized void sendOption() {
         String ops = "You have options: ";
-                  //  + "##LOCATION, ";
-                   // + "##PLAYSOUND, "
-                   // + "##STOPSOUND, "
-                   // + "##LOCKSCREEN. "
-                  //  + "Or #BYE to end the session.";
+        for (String s: commands) {
+            ops += s + ", ";
+        }
+        ops += "Or #BYE to end the session.";
         sendSMS(lastPhoneNumber, ops);
     }
 

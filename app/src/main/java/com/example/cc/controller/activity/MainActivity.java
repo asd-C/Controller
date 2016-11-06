@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.cc.controller.R;
 import com.example.cc.controller.activity.intro.IntroActivity;
+import com.example.cc.controller.activity.intro.IntroHelper;
 import com.example.cc.controller.service.MainService;
 import com.example.cc.controller.service.admin.DeviceAdminTools;
 import com.example.cc.controller.service.command.ServiceCommands;
@@ -42,13 +43,13 @@ import com.example.cc.controller.service.tools.PlaySound;
 *       open/close session to send commands
 *       auto start,
 *       save/recover last state,
+*       presentation,
 *       check if gps is on
 *
 * Features to implement:
 *       finish command class,
 *       finish SMSParser
 *       layout
-*       presentation
 *
 * Warning:
 *       resetPassword is not in use
@@ -122,10 +123,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startActivity(new Intent(this, IntroActivity.class));
 
         startService(new Intent(this, MainService.class));
-        requestSMSAndAdminPermission();
+//        requestSMSAndAdminPermission();
 
         button = (Button) findViewById(R.id.button);
         button.setOnClickListener(this);
@@ -136,6 +136,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         enable_btn = (Button) findViewById(R.id.enable_btn_main);
         enable_btn.setOnClickListener(this);
         enable_btn.setText(BTN_ENABLE);
+
+        IntroHelper helper = new IntroHelper(this);
+        if (helper.isFirstAccess()) {
+            startActivity(new Intent(this, IntroActivity.class));
+        }
     }
 
     /**
@@ -249,13 +254,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-                PlaySound p = PlaySound.getInstance(getApplicationContext());
-
-                if (p.isPlaying()) {
-                    p.stop();
-                } else {
-                    p.play();
-                }
+                (new IntroHelper(this)).set(true);
                 break;
 
             case R.id.enable_btn_main:
