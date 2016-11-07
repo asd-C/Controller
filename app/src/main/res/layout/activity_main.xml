@@ -4,33 +4,62 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#E1F5FE"
     tools:context="com.example.cc.controller.activity.MainActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:background="#01579B">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomlayout"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true"
+        android:background="#01579B"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+
     <Button
-        android:text="Button"
+        android:text="@string/help_btn_main"
+        android:textColor="#81D4FA"
+        android:background="@android:color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/help_btn_main"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/bottomlayout" />
+
+    <Button
+        android:text="Reset"
+        android:textColor="#81D4FA"
+        android:background="@android:color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/button"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/help_btn_main"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/enable_btn_main"
+        android:textColor="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/enable_btn_main"
+        android:background="@drawable/enable_btn"/>
 
     <TextView
         android:text="@string/default_sms_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sms_main"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp" />
-
-    <Button
-        android:text="@string/enable_btn_main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/enable_btn_main" />
+        android:layout_alignTop="@+id/button"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

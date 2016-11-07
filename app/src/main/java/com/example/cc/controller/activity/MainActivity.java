@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -16,10 +17,11 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -30,7 +32,6 @@ import com.example.cc.controller.service.MainService;
 import com.example.cc.controller.service.admin.DeviceAdminTools;
 import com.example.cc.controller.service.command.ServiceCommands;
 import com.example.cc.controller.service.tools.LocationHandler;
-import com.example.cc.controller.service.tools.PlaySound;
 
 /*
 * Feature available:
@@ -43,13 +44,14 @@ import com.example.cc.controller.service.tools.PlaySound;
 *       open/close session to send commands
 *       auto start,
 *       save/recover last state,
+*       layout,
 *       presentation,
 *       check if gps is on
 *
 * Features to implement:
 *       finish command class,
 *       finish SMSParser
-*       layout
+*       show how to work
 *
 * Warning:
 *       resetPassword is not in use
@@ -112,8 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private Button button;
-    private Button enable_btn;
+    private Button reset_btn, enable_btn, help_btn;
     private TextView sms_main;
 
     private static final String BTN_ENABLE = "ENABLE";
@@ -124,18 +125,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+        }
+
         startService(new Intent(this, MainService.class));
 //        requestSMSAndAdminPermission();
 
-        button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(this);
+        reset_btn = (Button) findViewById(R.id.button);
+        reset_btn.setOnClickListener(this);
+//        reset_btn.setVisibility(View.GONE);
 
         // textview which shows the received SMSs
         sms_main = (TextView) findViewById(R.id.sms_main);
+        sms_main.setVisibility(View.GONE);
 
         enable_btn = (Button) findViewById(R.id.enable_btn_main);
         enable_btn.setOnClickListener(this);
         enable_btn.setText(BTN_ENABLE);
+
+        help_btn = (Button) findViewById(R.id.help_btn_main);
+        help_btn.setOnClickListener(this);
 
         IntroHelper helper = new IntroHelper(this);
         if (helper.isFirstAccess()) {
@@ -262,14 +277,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 enableBtnClicked(btn);
                 break;
 
+            case R.id.help_btn_main:
+                showHelpDialog();
+                break;
+
             default:
                 break;
         }
     }
 
+    private void showHelpDialog() {
+        String ops = "To start control your cell phone remotely, you need to open session.\n" +
+                "To open session: #contoller\n";
+        String[] commands = getResources().getStringArray(R.array.Commands);
+        ops += "To close session: #BYE\n";
+        ops += "When the session is opened, you have options:\n";
+        for (String s: commands) {
+            ops += s + "\n";
+        }
+        (new AlertDialog.Builder(this)).setTitle("Help").setMessage(ops).show();
+    }
+
     /**
      * Check if it is ready to start, if not request permissions.
-     * Change the button's text, ENABLE/DISABLE.
+     * Change the reset_btn's text, ENABLE/DISABLE.
      * Notify the MainService to start monitoring incoming sms.
      * */
     private void enableBtnClicked(Button btn) {
