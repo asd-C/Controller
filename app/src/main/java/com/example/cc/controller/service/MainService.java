@@ -114,7 +114,7 @@ public class MainService extends Service {
             notification = new Notification.Builder(this)
                     .setContentTitle("Controller")
                     .setContentText("Hey human! Feed me a delicious sms!")
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.ic_stat_hi)
                     .setContentIntent(contentIntent)
                     .build();
         }
