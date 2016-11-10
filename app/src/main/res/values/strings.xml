@@ -12,13 +12,13 @@
     <string name="start">GOT IT</string>
 
     <string name="slide_1_title">Lost your phone?</string>
-    <string name="slide_1_desc">Do not remember where is your cell phone? \nOr it has been stolen?</string>
+    <string name="slide_1_desc">Do not remember where is your cell phone?</string>
 
-    <string name="slide_2_title">Track your phone!</string>
-    <string name="slide_2_desc">You can track your cell phone via SMS! \nWe just need some permissions!</string>
+    <string name="slide_2_title">Locate your phone!</string>
+    <string name="slide_2_desc">You can locate your cell phone via SMS! \nWe just need some permissions!</string>
 
     <string name="slide_3_title">We can do more!</string>
-    <string name="slide_3_desc">We can lock cell phone screen and change the password! \nWe just need admin permission!</string>
+    <string name="slide_3_desc">We can lock cell phone screen! \nWe just need admin permission!</string>
 
     <string name="slide_4_title">Let us start?!</string>
     <string name="slide_4_desc">Let us start?!</string>

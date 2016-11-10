@@ -17,11 +17,10 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -74,10 +73,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     sms_main.setText(((Bundle)msg.obj).getString("sms"));
                     break;
                 case ServiceCommands.MSG_START_RECEIVING_SMS:
-                    enable_btn.setText(BTN_DISABLE);
+                    setBtnActive();
                     break;
                 case ServiceCommands.MSG_STOP_RECEIVING_SMS:
-                    enable_btn.setText(BTN_ENABLE);
+                    setBtnInactive();
                     break;
             }
             super.handleMessage(msg);
@@ -114,25 +113,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    private void setBtnActive() {
+        enable_btn.setText(BTN_ACTIVE);
+        enable_btn.setTextColor(Color.WHITE);
+        enable_btn.setBackground(ContextCompat.getDrawable(this, R.drawable.active_btn));
+    }
+
+    private void setBtnInactive() {
+        enable_btn.setText(BTN_INACTIVE);
+        enable_btn.setTextColor(Color.BLACK);
+        enable_btn.setBackground(ContextCompat.getDrawable(this, R.drawable.inactive_btn));
+    }
+
+    private boolean isBtnActive() {
+        return enable_btn.getText().equals(BTN_ACTIVE);
+    }
+
     private Button reset_btn, enable_btn, help_btn;
     private TextView sms_main;
 
-    private static final String BTN_ENABLE = "ENABLE";
-    private static final String BTN_DISABLE = "DISABLE";
+    private static final String BTN_ACTIVE = "Active";
+    private static final String BTN_INACTIVE = "Inactive";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-        }
 
         startService(new Intent(this, MainService.class));
 //        requestSMSAndAdminPermission();
@@ -147,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         enable_btn = (Button) findViewById(R.id.enable_btn_main);
         enable_btn.setOnClickListener(this);
-        enable_btn.setText(BTN_ENABLE);
+        setBtnInactive();
 
         help_btn = (Button) findViewById(R.id.help_btn_main);
         help_btn.setOnClickListener(this);
@@ -273,8 +279,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.enable_btn_main:
-                Button btn = (Button) v;
-                enableBtnClicked(btn);
+                enableBtnClicked();
                 break;
 
             case R.id.help_btn_main:
@@ -303,8 +308,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Change the reset_btn's text, ENABLE/DISABLE.
      * Notify the MainService to start monitoring incoming sms.
      * */
-    private void enableBtnClicked(Button btn) {
-        if (btn.getText().equals(BTN_ENABLE)) {
+    private void enableBtnClicked() {
+        if (!isBtnActive()) {
             // if do not have admin permission,
             // can not start the service.
             if (!haveAdminPermission()) {
@@ -330,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                btn.setText(BTN_DISABLE);
+                setBtnActive();
             } else {
                 startService(new Intent(this, MainService.class));
                 doBindService();
@@ -348,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startService(new Intent(this, MainService.class));
                 doBindService();
             }
-            btn.setText(BTN_ENABLE);
+            setBtnInactive();
         }
     }
 

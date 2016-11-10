@@ -4,62 +4,146 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E1F5FE"
     tools:context="com.example.cc.controller.activity.MainActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_alignParentTop="true"
-        android:background="#01579B">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttons"
+        android:layout_margin="10dp"
+        android:layout_alignParentTop="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/info_item"
+                android:text="Example"
+                android:textColor="#686767"
+                android:textSize="20sp"
+                android:layout_gravity="center"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/info_item"
+                    android:layout_alignParentLeft="true"
+                    android:text="Controller:"
+                    android:textColor="@android:color/holo_red_dark"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/info_item"
+                    android:layout_alignParentRight="true"
+                    android:text="You:"
+                    android:textColor="@android:color/holo_red_dark"/>
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/info_item"
+                android:layout_gravity="end"
+                android:text="#controller"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/info_item"
+                android:text="Hi, you just opened the session."/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/info_item"
+                android:layout_gravity="end"
+                android:text="##location"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/info_item"
+                android:text="http://maps.google.com/maps?q=loc:lat,lon"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/info_item"
+                android:layout_gravity="center"
+                android:text="......"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/info_item"
+                android:layout_gravity="end"
+                android:text="#BYE"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/info_item"
+                android:text="The session is closed now."/>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:text="@string/default_sms_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sms_main"
+            android:visibility="gone" />
+
+        <Button
+            android:text="@string/enable_btn_main"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:layout_margin="30dp"
+            android:id="@+id/enable_btn_main"
+            android:background="@drawable/inactive_btn"/>
+
+        <Button
+            android:text="Reset"
+            android:textColor="#81D4FA"
+            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            android:visibility="gone" />
+
+        <Button
+            android:text="@string/help_btn_main"
+            android:textColor="#81D4FA"
+            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/help_btn_main"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/bottomlayout"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_alignParentBottom="true"
-        android:background="#01579B"
-        android:orientation="horizontal">
-
-    </LinearLayout>
-
-    <Button
-        android:text="@string/help_btn_main"
-        android:textColor="#81D4FA"
-        android:background="@android:color/transparent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/help_btn_main"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@id/bottomlayout" />
-
-    <Button
-        android:text="Reset"
-        android:textColor="#81D4FA"
-        android:background="@android:color/transparent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:layout_above="@id/help_btn_main"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:text="@string/enable_btn_main"
-        android:textColor="@android:color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:id="@+id/enable_btn_main"
-        android:background="@drawable/enable_btn"/>
-
-    <TextView
-        android:text="@string/default_sms_main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sms_main"
-        android:layout_alignTop="@+id/button"
-        android:layout_centerHorizontal="true" />
 </RelativeLayout>
