@@ -11,8 +11,8 @@
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
 
-    <string name="slide_1_title">Lost your phone?</string>
-    <string name="slide_1_desc">Do not remember where is your cell phone?</string>
+    <string name="slide_1_title">Talk to your phone</string>
+    <string name="slide_1_desc">Talk to your phone and control your phone remotely.</string>
 
     <string name="slide_2_title">Locate your phone!</string>
     <string name="slide_2_desc">You can locate your cell phone via SMS! \nWe just need some permissions!</string>
