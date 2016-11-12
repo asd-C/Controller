@@ -5,6 +5,7 @@
     <string name="help_btn_main">Help</string>
     <string name="default_sms_main">No sms to show</string>
     <string name="enable_btn_main">ENABLE</string>
+    <string name="reset_btn_main">Reset</string>
 
     <!-- Intro -->
     <string name="next">NEXT</string>
@@ -12,10 +13,10 @@
     <string name="start">GOT IT</string>
 
     <string name="slide_1_title">Talk to your phone</string>
-    <string name="slide_1_desc">Talk to your phone and control your phone remotely.</string>
+    <string name="slide_1_desc">Talk to your phone and control it remotely via SMS.</string>
 
-    <string name="slide_2_title">Locate your phone!</string>
-    <string name="slide_2_desc">You can locate your cell phone via SMS! \nWe just need some permissions!</string>
+    <string name="slide_2_title">Like this</string>
+    <string name="slide_2_desc">Send SMS to your phone \nfrom another phone. \nWe just need some\n permissions!</string>
 
     <string name="slide_3_title">We can do more!</string>
     <string name="slide_3_desc">We can lock cell phone screen! \nWe just need admin permission!</string>
@@ -35,5 +36,17 @@
         <item>@string/LOCATION</item>
         <item>@string/LOCK_SCREEN</item>
     </string-array>
+
+    <string name="exemple">Example</string>
+    <string name="controller_side">Controller:</string>
+    <string name="you">You:</string>
+    <string name="more">......</string>
+
+    <string name="do_comm">doing command.</string>
+    <string name="sms_hi_controller">Hi #controller.</string>
+    <string name="sms_hi_answer">Hi, you just opened the session.</string>
+    <string name="sms_location_answer">http://maps.google.com/maps?q=loc:lat,lon</string>
+    <string name="sms_bye">#BYE</string>
+    <string name="sms_bye_answer">The session is closed now.</string>
 
 </resources>

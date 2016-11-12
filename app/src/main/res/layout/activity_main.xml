@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/info_item"
-                android:text="Example"
+                android:text="@string/exemple"
                 android:textColor="#686767"
                 android:textSize="20sp"
                 android:layout_gravity="center"/>
@@ -36,8 +36,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@drawable/info_item"
-                    android:layout_alignParentLeft="true"
-                    android:text="Controller:"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/controller_side"
                     android:textColor="@android:color/holo_red_dark"/>
 
                 <TextView
@@ -45,8 +45,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@drawable/info_item"
-                    android:layout_alignParentRight="true"
-                    android:text="You:"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/you"
                     android:textColor="@android:color/holo_red_dark"/>
             </RelativeLayout>
 
@@ -55,28 +55,28 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/info_item"
-                android:layout_gravity="end"
-                android:text="#controller"/>
+                android:text="@string/sms_hi_controller"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/info_item"
-                android:text="Hi, you just opened the session."/>
+                android:layout_gravity="end"
+                android:text="@string/sms_hi_answer"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/info_item"
-                android:layout_gravity="end"
-                android:text="##location"/>
+                android:text="@string/LOCATION"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/info_item"
-                android:text="http://maps.google.com/maps?q=loc:lat,lon"/>
+                android:layout_gravity="end"
+                android:text="@string/sms_location_answer"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -84,21 +84,21 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/info_item"
                 android:layout_gravity="center"
-                android:text="......"/>
+                android:text="@string/more"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/info_item"
-                android:layout_gravity="end"
-                android:text="#BYE"/>
+                android:text="@string/sms_bye"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/info_item"
-                android:text="The session is closed now."/>
+                android:layout_gravity="end"
+                android:text="@string/sms_bye_answer"/>
         </LinearLayout>
     </ScrollView>
 
@@ -123,18 +123,18 @@
             android:textColor="@android:color/black"
             android:layout_width="@dimen/btn_size"
             android:layout_height="@dimen/btn_size"
-            android:layout_margin="30dp"
+            android:layout_margin="20dp"
             android:id="@+id/enable_btn_main"
             android:background="@drawable/inactive_btn"/>
 
         <Button
-            android:text="Reset"
+            android:text="@string/reset_btn_main"
             android:textColor="#81D4FA"
             android:background="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/button"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <Button
             android:text="@string/help_btn_main"
