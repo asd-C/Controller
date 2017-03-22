@@ -8,3 +8,6 @@
 /captures
 .externalNativeBuild
 .idea/vcs.xml
+app/app-release.apk
+app/src/androidTest/
+app/src/test/
