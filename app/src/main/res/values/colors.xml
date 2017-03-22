@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#363237</color>
+    <color name="colorPrimaryDark">#011a27</color>
     <color name="colorAccent">#FF4081</color>
 
     <!-- Intro -->
@@ -36,4 +36,14 @@
         <item>@color/dot_dark_screen3</item>
         <item>@color/dot_dark_screen4</item>
     </array>
+
+    <color name="bg1">#063852</color>
+    <color name="bg2">#063852</color>
+    <color name="bg3">#063852</color>
+
+    <color name="bg_all">#011a27</color>
+
+    <color name="ripple">#dcdada</color>
+
+    <color name="text_color">#d1d1d1</color>
 </resources>

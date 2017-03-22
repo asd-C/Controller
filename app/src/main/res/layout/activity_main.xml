@@ -4,110 +4,75 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg_all"
+    android:padding="10dp"
     tools:context="com.example.cc.controller.activity.MainActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/buttons"
+    <RelativeLayout
+        android:id="@+id/playground"
+        android:elevation="6dp"
+        android:layout_alignParentTop="true"
         android:layout_margin="10dp"
-        android:layout_alignParentTop="true">
-        <LinearLayout
-            android:layout_width="match_parent"
+        android:background="@drawable/layout_bg1"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_navigation"
+            android:background="@android:color/transparent"/>
+    </RelativeLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/info_item"
-                android:text="@string/exemple"
-                android:textColor="#686767"
-                android:textSize="20sp"
-                android:layout_gravity="center"/>
+    <com.skyfishjy.library.RippleBackground
+        android:elevation="6dp"
+        android:clickable="true"
+        android:background="@drawable/layout_bg2"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/playground"
+        android:layout_above="@+id/buttons"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/content"
+        app:rb_color="#0099CC"
+        app:rb_radius="32dp"
+        app:rb_rippleAmount="1"
+        app:rb_duration="3000"
+        app:rb_scale="6">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/info_item"
-                    android:layout_alignParentRight="true"
-                    android:text="@string/controller_side"
-                    android:textColor="@android:color/holo_red_dark"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/info_item"
-                    android:layout_alignParentLeft="true"
-                    android:text="@string/you"
-                    android:textColor="@android:color/holo_red_dark"/>
-            </RelativeLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/info_item"
-                android:text="@string/sms_hi_controller"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/info_item"
-                android:layout_gravity="end"
-                android:text="@string/sms_hi_answer"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/info_item"
-                android:text="@string/LOCATION"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/info_item"
-                android:layout_gravity="end"
-                android:text="@string/sms_location_answer"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/info_item"
-                android:layout_gravity="center"
-                android:text="@string/more"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/info_item"
-                android:text="@string/sms_bye"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/info_item"
-                android:layout_gravity="end"
-                android:text="@string/sms_bye_answer"/>
-        </LinearLayout>
-    </ScrollView>
+            <ToggleButton
+                android:elevation="16dp"
+                android:layout_centerInParent="true"
+                android:checked="true"
+                android:text="@string/enable_btn_main"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:layout_width="@dimen/btn_size"
+                android:layout_height="@dimen/btn_size"
+                android:layout_margin="20dp"
+                android:id="@+id/enable_btn_main"
+                android:background="@drawable/start_btn" />
+        </RelativeLayout>
+    </com.skyfishjy.library.RippleBackground>
 
     <LinearLayout
+        android:clickable="true"
+        android:background="@drawable/layout_bg3"
+        android:elevation="6dp"
+        android:layout_margin="10dp"
         android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="vertical"
+        android:gravity="center"
         android:layout_alignParentBottom="true">
 
         <TextView
@@ -118,18 +83,8 @@
             android:visibility="gone" />
 
         <Button
-            android:text="@string/enable_btn_main"
-            android:textAlignment="center"
-            android:textColor="@android:color/black"
-            android:layout_width="@dimen/btn_size"
-            android:layout_height="@dimen/btn_size"
-            android:layout_margin="20dp"
-            android:id="@+id/enable_btn_main"
-            android:background="@drawable/inactive_btn"/>
-
-        <Button
             android:text="@string/reset_btn_main"
-            android:textColor="#81D4FA"
+            android:textColor="@color/text_color"
             android:background="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -138,7 +93,7 @@
 
         <Button
             android:text="@string/help_btn_main"
-            android:textColor="#81D4FA"
+            android:textColor="@color/text_color"
             android:background="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
