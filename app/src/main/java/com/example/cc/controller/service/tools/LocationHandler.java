@@ -23,7 +23,7 @@ public class LocationHandler implements LocationListener {
     private static final String LOG = "LocationHandler";
 
     // update in 5 seconds
-    private static final int LOCATION_REFRESH_TIME = 5000;
+    private static final int LOCATION_REFRESH_TIME = 1000;
     // update in 0 meters
     private static final int LOCATION_REFRESH_DISTANCE = 0;
 
@@ -37,7 +37,7 @@ public class LocationHandler implements LocationListener {
                         != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
+            // here to request the missing per missions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation

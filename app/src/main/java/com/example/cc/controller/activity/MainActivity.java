@@ -21,6 +21,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -57,7 +59,7 @@ import com.skyfishjy.library.RippleBackground;
 *       resetPassword is not in use
 * */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener{
 
     private Messenger serviceMessenger;
     private Messenger clientMessenger = new Messenger(new Handler(){
@@ -138,6 +140,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ToggleButton enable_btn;
     private TextView sms_main;
 
+    private RelativeLayout playground;
+    private ImageButton playground_btn;
+
     private static final String BTN_ACTIVE = "Active";
     private static final String BTN_INACTIVE = "Inactive";
 
@@ -163,6 +168,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         help_btn = (Button) findViewById(R.id.help_btn_main);
         help_btn.setOnClickListener(this);
+
+        playground = (RelativeLayout) findViewById(R.id.playground);
+        playground.setOnClickListener(this);
+        playground.setOnLongClickListener(this);
+        playground_btn = (ImageButton) findViewById(R.id.playground_btn);
+        playground_btn.setOnClickListener(this);
+        playground_btn.setOnLongClickListener(this);
 
         IntroHelper helper = new IntroHelper(this);
         if (helper.isFirstAccess()) {
@@ -292,9 +304,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showHelpDialog();
                 break;
 
+            case R.id.playground:
+                startPlayground();
+                break;
+
+            case R.id.playground_btn:
+                startPlayground();
+                break;
+
             default:
                 break;
         }
+    }
+
+    private void startPlayground() {
+        startActivity(new Intent(this, PlaygroundActivity.class));
     }
 
     private void showHelpDialog() {
@@ -372,5 +396,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setMessage("Please, turn on GPS! \nWe need GPS to locate your phone if you lost it.")
                 .create();
         dialog.show();
+    }
+
+    private void showLongClickInfoDialog(String info) {
+        (new AlertDialog.Builder(this)).setTitle("Info").setMessage(info).show();
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.playground:
+                showLongClickInfoDialog("Click here to get into playgroud!");
+                break;
+
+            case R.id.playground_btn:
+                showLongClickInfoDialog("Click here to get into playgroud!");
+                break;
+
+            default:
+                break;
+        }
+        return true;
     }
 }

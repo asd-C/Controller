@@ -33,7 +33,6 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".service.autostart.AutoStart">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -46,7 +45,10 @@
             android:exported="false"
             android:process=":remote" />
 
-        <activity android:name=".activity.intro.IntroActivity" android:theme="@style/AppTheme.NoActionbar" />
+        <activity
+            android:name=".activity.intro.IntroActivity"
+            android:theme="@style/AppTheme.NoActionbar" />
+        <activity android:name=".activity.PlaygroundActivity"></activity>
     </application>
 
 </manifest>

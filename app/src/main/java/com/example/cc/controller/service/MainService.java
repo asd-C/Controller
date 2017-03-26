@@ -23,6 +23,7 @@ import com.example.cc.controller.service.admin.DeviceAdminTools;
 import com.example.cc.controller.service.command.ServiceCommands;
 import com.example.cc.controller.service.tools.LocationHandler;
 import com.example.cc.controller.service.tools.PlaySound;
+import com.example.cc.controller.service.tools.SMSHandler;
 import com.example.cc.controller.service.tools.SMSSender;
 import com.example.cc.controller.service.tools.StateManager;
 
@@ -88,6 +89,9 @@ public class MainService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        smsHandler = new SMSHandler(this);
+
         int state = getState();
         if (state == StateManager.STATE_ENABLED) {
             registerMessageReceiver();
@@ -100,6 +104,7 @@ public class MainService extends Service {
     }
 
     private Notification notification;
+    private SMSHandler smsHandler;
     private static final int NOTIFICATION_ID = 1;
 
     /**
@@ -154,7 +159,7 @@ public class MainService extends Service {
             isRegisteredReceiver = false;
             saveState(StateManager.STATE_DISABLED);
             cancelNotification();
-            stopSession(null);
+            smsHandler.stopSession(null);
             Log.i("MessageReceiver", "unregistering messageReceiver.");
         }
     }
@@ -168,45 +173,19 @@ public class MainService extends Service {
         public void onReceive(Context context, Intent intent) {
             SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
             String sms = messages[0].getMessageBody();
-            if (startSession(messages[0])) {
+            if (smsHandler.startSession(messages[0])) {
                 if (messages[0].getOriginatingAddress()
                         .equalsIgnoreCase(SMSSender.getInstance(context)
                                 .getLastPhoneNumber())) {
-                    handleSMS(sms);
-                    stopSession(messages[0]);
+                    smsHandler.handleSMS(sms);
+                    notifyClientNewIncomingSMS(sms);
+                    smsHandler.stopSession(messages[0]);
                 }
             }
             Log.i("MessageReceiver,SMS", sms);
         }
     }
-
-    /**
-     * Handle new SMS,
-     * when it contains '##LOCKSCREEN', the server locks screen
-     * when it contains '##PLAYSOUND', the server plays sound
-     * when it contains '##STOPSOUND', the server stop playing sound
-     * */
-    private void handleSMS(String sms) {
-        if (sms.contains(getString(R.string.LOCK_SCREEN))) {
-            DeviceAdminTools.getInstance(this).lockScreen(this);
-        } else if (sms.contains(getString(R.string.PLAY_SOUND))) {
-            PlaySound.getInstance(getApplicationContext()).play();
-        } else if (sms.contains(getString(R.string.STOP_SOUND))) {
-            PlaySound.getInstance(getApplicationContext()).stop();
-        } else if (sms.contains(getString(R.string.LOCATION))) {
-            LocationHandler lh = LocationHandler.getInstance(this);
-            lh.registerLocationListener();
-
-            // checking again, because it is possible
-            // that fails to register Location listener
-            if (lh.isListenerRegistered()) {
-                SMSSender.getInstance(this).sendLocationBack();
-            }
-        }
-
-        notifyClientNewIncomingSMS(sms);
-    }
-
+    
     /**
      * Send the content of sms to the client side if the client is on
      * */
@@ -224,43 +203,5 @@ public class MainService extends Service {
                 e.printStackTrace();
             }
         }
-    }
-
-    private boolean isSessionStarted;
-
-    /**
-     * Start session to receive commands from requester
-     * */
-    private boolean startSession(SmsMessage sms) {
-        if (isSessionStarted) return true;
-
-        if (sms.getMessageBody().toLowerCase().contains("#controller")) {
-            Log.i("Session", "Session opened.");
-            SMSSender smsSender = SMSSender.getInstance(this);
-            smsSender.setLastPhoneNumber(sms.getOriginatingAddress());
-            smsSender.sendHi();
-            isSessionStarted = true;
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Called when requester send "#BYE" or when unregister the receiver.
-     * Close session.
-     * */
-    private boolean stopSession(SmsMessage sms) {
-        if (!isSessionStarted) return true;
-
-        // sms = null, when unregister the receiver
-        if (sms == null || sms.getMessageBody().contains("#BYE")) {
-            Log.i("Session", "Session closed.");
-            isSessionStarted = false;
-            SMSSender.getInstance(this).sendBye();
-            SMSSender.getInstance(this).setLastPhoneNumber(null);
-            return true;
-        }
-        return false;
     }
 }
